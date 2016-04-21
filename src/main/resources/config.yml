@@ -1,0 +1,6 @@
+max amount: 40
+break types:
+- GOLD_ORE
+- IRON_ORE
+break items:
+- GOLD_PICKAXE
