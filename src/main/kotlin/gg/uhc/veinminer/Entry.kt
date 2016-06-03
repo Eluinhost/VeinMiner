@@ -10,8 +10,8 @@ class Entry : JavaPlugin() {
 
         val traverser = VeinTraverser(config.getInt("max amount"))
 
-        val toBreak = config.getStringList("break types").map { convertToMaterial(it) }.filterNotNull().toSet()
-        val toBreakFor = config.getStringList("break items").map { convertToMaterial(it) }.filterNotNull().toSet()
+        val toBreak = config.getStringList("break types").mapNotNull { convertToMaterial(it) }.toSet()
+        val toBreakFor = config.getStringList("break items").mapNotNull { convertToMaterial(it) }.toSet()
 
         val listener = DigListener(traverser, toBreak, toBreakFor)
         server.pluginManager.registerEvents(listener, this)

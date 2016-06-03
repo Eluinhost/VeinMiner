@@ -9,11 +9,12 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 class DigListener(val traverser: VeinTraverser, val multiBreakFor: Set<Material>, val allowedItems: Set<Material>) : Listener {
+    private val RANDOM = Random()
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun on(event: BlockBreakEvent) {
-        if (!allowedItems.contains(event.player.itemInHand.type)) return
-        if (!multiBreakFor.contains(event.block.type)) return
+        if (event.player.itemInHand.type !in allowedItems) return
+        if (event.block.type !in multiBreakFor) return
 
         // Remove the block that is currently being broken to avoid double check
         val toBreak = traverser.getMatchingTypesAtLocation(event.block).minus(event.block)
@@ -24,14 +25,12 @@ class DigListener(val traverser: VeinTraverser, val multiBreakFor: Set<Material>
         var tempDurability = item.durability
 
         for (block in toBreak) {
-            // if it has dropped to 1 then stop breaking more, the block itself will
-            // take the final durability after the event has ran
-            if (canTakeDamage && tempDurability <= 1) break
+            if (canTakeDamage && tempDurability >= item.type.maxDurability) break
 
             block.breakNaturally(event.player.itemInHand)
 
             if (canTakeDamage && RANDOM.nextDouble() < chance) {
-                tempDurability--
+                tempDurability++
             }
         }
 
@@ -40,11 +39,5 @@ class DigListener(val traverser: VeinTraverser, val multiBreakFor: Set<Material>
         }
     }
 
-    protected fun chanceToTakeDamage(item: ItemStack): Double {
-        return 1.0
-    }
-
-    companion object {
-        protected val RANDOM = Random()
-    }
+    private fun chanceToTakeDamage(item: ItemStack): Double = 1.0
 }
