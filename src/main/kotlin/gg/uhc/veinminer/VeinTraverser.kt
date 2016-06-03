@@ -1,14 +1,13 @@
 package gg.uhc.veinminer
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 import org.bukkit.block.Block
 
 class VeinTraverser(val maxSize: Int) {
     fun getMatchingTypesAtLocation(block: Block): Set<Block> {
         val type = block.type
 
-        val matching = Sets.newHashSet(block)
+        val matching = mutableSetOf(block)
 
         // FIFO list of blocks awaiting checks
         val waitingForChecks = Lists.newLinkedList<Block>()
@@ -32,7 +31,7 @@ class VeinTraverser(val maxSize: Int) {
                         if (check == null || check.type != type) continue
 
                         // add to matching set
-                        if (matching.add(current)) {
+                        if (matching.add(check)) {
                             // if the location wasn't already found add to list and quit if we're at max size
                             waitingForChecks.add(check)
                             if (matching.size == maxSize) {
